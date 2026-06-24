@@ -1,60 +1,48 @@
 import os
 
-BOOK_FILE = "books.txt"
+BOOK_FILE = os.path.join(os.path.dirname(__file__), "books.txt")
+
+print("Using file:", os.path.abspath(BOOK_FILE))
+
 
 if not os.path.exists(BOOK_FILE):
     open(BOOK_FILE, "w").close()
-
 def add_book():
-    book_id = input("Enter Book ID: ")
-    book_name = input("Enter Book Name: ")
-    author = input("Enter Author Name: ")
+    book_id = input("Book ID: ")
+    name = input("Book Name: ")
+    author = input("Author: ")
 
     with open(BOOK_FILE, "a") as f:
-        f.write(f"{book_id},{book_name},{author}\n")
+        f.write(f"{book_id},{name},{author},Available,None\n")
 
-    print("Book Added Successfully!")
+    print("Book Added Successfully")
 
 def view_books():
     with open(BOOK_FILE, "r") as f:
         books = f.readlines()
 
     if not books:
-        print("No books available")
+        print("No Books Found")
         return
 
-    print("\nBOOK LIST")
-    print("-" * 50)
-    print("ID\tBook Name\tAuthor")
-    print("-" * 50)
+    print("\nID | Name | Author | Status | Student")
+    print("-" * 60)
 
     for book in books:
-        data = book.strip().split(",")
-        print(f"{data[0]}\t{data[1]}\t{data[2]}")
+        if not book.strip():
+           continue
 
-def search_book():
-    search_id = input("Enter Book ID: ")
-
-    with open(BOOK_FILE, "r") as f:
-        books = f.readlines()
-
-    found = False
-
-    for book in books:
         data = book.strip().split(",")
 
-        if data[0] == search_id:
-            print("\nBook Found")
-            print("Book ID:", data[0])
-            print("Book Name:", data[1])
-            print("Author:", data[2])
-            found = True
+        if len(data) < 5:
+           print("Invalid record:", book)
+           continue
 
-    if not found:
-        print("Book Not Found")
+        print(f"{data[0]} | {data[1]} | {data[2]} | {data[3]} | {data[4]}")
 
-def delete_book():
-    delete_id = input("Enter Book ID to delete: ")
+def issue_book():
+    book_id = input("Enter Book ID: ")
+    student = input("Student Name: ")
 
     with open(BOOK_FILE, "r") as f:
         books = f.readlines()
@@ -63,18 +51,63 @@ def delete_book():
         for book in books:
             data = book.strip().split(",")
 
-            if data[0] != delete_id:
+            if data[0] == book_id:
+
+                if data[3] == "Issued":
+                    print("Book Already Issued")
+                else:
+                    data[3] = "Issued"
+                    data[4] = student
+                    print("Book Issued Successfully")
+
+                book = ",".join(data) + "\n"
+
+            f.write(book)
+
+def return_book():
+    book_id = input("Enter Book ID: ")
+
+    with open(BOOK_FILE, "r") as f:
+        books = f.readlines()
+
+    with open(BOOK_FILE, "w") as f:
+        for book in books:
+            data = book.strip().split(",")
+
+            if data[0] == book_id:
+                data[3] = "Available"
+                data[4] = "None"
+
+                print("Book Returned Successfully")
+
+                book = ",".join(data) + "\n"
+
+            f.write(book)
+
+def delete_book():
+    book_id = input("Book ID to Delete: ")
+
+    with open(BOOK_FILE, "r") as f:
+        books = f.readlines()
+
+    with open(BOOK_FILE, "w") as f:
+        for book in books:
+            data = book.strip().split(",")
+
+            if data[0] != book_id:
                 f.write(book)
 
-    print("Book Deleted Successfully")
+    print("Book Deleted")
 
 while True:
+
     print("\n===== LIBRARY MANAGEMENT SYSTEM =====")
     print("1. Add Book")
     print("2. View Books")
-    print("3. Search Book")
-    print("4. Delete Book")
-    print("5. Exit")
+    print("3. Issue Book")
+    print("4. Return Book")
+    print("5. Delete Book")
+    print("6. Exit")
 
     choice = input("Enter Choice: ")
 
@@ -85,12 +118,15 @@ while True:
         view_books()
 
     elif choice == "3":
-        search_book()
+        issue_book()
 
     elif choice == "4":
-        delete_book()
+        return_book()
 
     elif choice == "5":
+        delete_book()
+
+    elif choice == "6":
         print("Thank You")
         break
 
