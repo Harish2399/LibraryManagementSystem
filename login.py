@@ -31,7 +31,9 @@ def login():
 
     if username.get()=="admin" and password.get()=="1234":
 
-        messagebox.showinfo("Success","Login Successful")
+        window.destroy()
+
+        import dashboard
 
     else:
 
