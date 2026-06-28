@@ -24,7 +24,17 @@ welcome = Label(
 
 welcome.pack(pady=10)
 
-Button(window, text="Add Book", width=20, height=2).pack(pady=5)
+def open_add_book():
+    window.destroy()
+    import add_book
+
+Button(
+    window,
+    text="Add Book",
+    width=20,
+    height=2,
+    command=open_add_book
+).pack(pady=5)
 
 Button(window, text="View Books", width=20, height=2).pack(pady=5)
 
