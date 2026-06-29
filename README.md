@@ -1,13 +1,31 @@
-# Library Management System
+# 📚 Library Management System
 
-A simple Python project for managing library books.
+A desktop-based Library Management System developed using Python, Tkinter, and SQLite.
 
-Features:
-- Add Books
+## Features
+
+- Login
+- Add Book
 - View Books
-- Search Books
-- Delete Books
+- Search Book
+- Delete Book
+- Issue Book
+- Return Book
+- Export Books to CSV
+- Dashboard Statistics
 
-Technology:
+## Technologies Used
+
 - Python
-- VS Code
+- Tkinter
+- SQLite
+
+## How to Run
+
+```bash
+python login.py
+```
+
+## Author
+
+Harish Ragavendra
