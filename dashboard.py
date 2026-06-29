@@ -50,7 +50,19 @@ Button(
     command=open_view_books
 ).pack(pady=5)
 
-Button(window, text="Search Book", width=20, height=2).pack(pady=5)
+def open_search_book():
+
+    window.destroy()
+
+    import search_book
+
+Button(
+    window,
+    text="Search Book",
+    width=20,
+    height=2,
+    command=open_search_book
+).pack(pady=5)
 
 Button(window, text="Update Book", width=20, height=2).pack(pady=5)
 
