@@ -1,28 +1,27 @@
 from tkinter import *
 from tkinter import messagebox
 import sqlite3
+import subprocess
+import sys
 
-window = Tk()
-
-window.title("Return Book")
-window.geometry("500x450")
-window.resizable(False, False)
-
-Label(window, text="RETURN BOOK", font=("Arial",18,"bold")).pack(pady=15)
-
-Label(window, text="Book ID").pack()
-
-book_id = Entry(window, width=30)
-book_id.pack()
-
-result = Label(window, text="", justify=LEFT, font=("Arial",11))
-result.pack(pady=20)
+# -----------------------------
+# Back to Dashboard
+# -----------------------------
+def back():
+    window.destroy()
+    subprocess.Popen([sys.executable, "dashboard.py"])
 
 
+# -----------------------------
+# Search Book
+# -----------------------------
 def search_book():
 
     if book_id.get() == "":
-        messagebox.showerror("Error","Enter Book ID")
+        messagebox.showerror(
+            "Error",
+            "Please Enter Book ID"
+        )
         return
 
     connection = sqlite3.connect("library.db")
@@ -54,13 +53,22 @@ Student : {row[4]}
     else:
 
         result.config(text="")
-        messagebox.showerror("Error","Book Not Found")
+        messagebox.showerror(
+            "Error",
+            "Book Not Found"
+        )
 
 
+# -----------------------------
+# Return Book
+# -----------------------------
 def return_book():
 
     if book_id.get() == "":
-        messagebox.showerror("Error","Enter Book ID")
+        messagebox.showerror(
+            "Error",
+            "Please Enter Book ID"
+        )
         return
 
     connection = sqlite3.connect("library.db")
@@ -75,13 +83,19 @@ def return_book():
 
     if row is None:
 
-        messagebox.showerror("Error","Book Not Found")
+        messagebox.showerror(
+            "Error",
+            "Book Not Found"
+        )
         connection.close()
         return
 
     if row[0] == "Available":
 
-        messagebox.showerror("Error","Book is already Available")
+        messagebox.showerror(
+            "Error",
+            "Book is already Available"
+        )
         connection.close()
         return
 
@@ -110,18 +124,68 @@ def return_book():
     book_id.delete(0, END)
 
 
-Button(
+# -----------------------------
+# Main Window
+# -----------------------------
+window = Tk()
+
+window.title("Return Book")
+
+window.geometry("500x480")
+
+window.resizable(False, False)
+
+Label(
     window,
-    text="Search",
-    width=20,
-    command=search_book
-).pack(pady=5)
+    text="RETURN BOOK",
+    font=("Arial",18,"bold")
+).pack(pady=15)
+
+Label(
+    window,
+    text="Book ID"
+).pack()
+
+book_id = Entry(
+    window,
+    width=30
+)
+book_id.pack()
+
+result = Label(
+    window,
+    text="",
+    justify=LEFT,
+    font=("Arial",11)
+)
+
+result.pack(pady=20)
+
+# -----------------------------
+# Buttons
+# -----------------------------
+button_frame = Frame(window)
+button_frame.pack(pady=10)
 
 Button(
-    window,
+    button_frame,
+    text="Search",
+    width=15,
+    command=search_book
+).grid(row=0, column=0, padx=10)
+
+Button(
+    button_frame,
     text="Return Book",
-    width=20,
+    width=15,
     command=return_book
-).pack(pady=10)
+).grid(row=0, column=1, padx=10)
+
+Button(
+    button_frame,
+    text="⬅ Back",
+    width=15,
+    command=back
+).grid(row=1, column=0, columnspan=2, pady=10)
 
 window.mainloop()

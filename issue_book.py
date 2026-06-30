@@ -1,30 +1,27 @@
 from tkinter import *
 from tkinter import messagebox
 import sqlite3
+import subprocess
+import sys
 
-window = Tk()
-window.title("Issue Book")
-window.geometry("500x450")
-window.resizable(False, False)
-
-Label(window, text="ISSUE BOOK", font=("Arial", 18, "bold")).pack(pady=15)
-
-Label(window, text="Book ID").pack()
-book_id = Entry(window, width=30)
-book_id.pack()
-
-Label(window, text="Student Name").pack()
-student = Entry(window, width=30)
-student.pack()
-
-result = Label(window, text="", font=("Arial", 11), justify=LEFT)
-result.pack(pady=20)
+# -----------------------------
+# Back to Dashboard
+# -----------------------------
+def back():
+    window.destroy()
+    subprocess.Popen([sys.executable, "dashboard.py"])
 
 
+# -----------------------------
+# Search Book
+# -----------------------------
 def search_book():
 
     if book_id.get() == "":
-        messagebox.showerror("Error", "Enter Book ID")
+        messagebox.showerror(
+            "Error",
+            "Please Enter Book ID"
+        )
         return
 
     connection = sqlite3.connect("library.db")
@@ -56,13 +53,22 @@ Student : {row[4]}
     else:
 
         result.config(text="")
-        messagebox.showerror("Error", "Book Not Found")
+        messagebox.showerror(
+            "Error",
+            "Book Not Found"
+        )
 
 
+# -----------------------------
+# Issue Book
+# -----------------------------
 def issue_book():
 
     if book_id.get() == "" or student.get() == "":
-        messagebox.showerror("Error", "Fill all fields")
+        messagebox.showerror(
+            "Error",
+            "Please fill all fields"
+        )
         return
 
     connection = sqlite3.connect("library.db")
@@ -76,12 +82,22 @@ def issue_book():
     row = cursor.fetchone()
 
     if row is None:
-        messagebox.showerror("Error", "Book Not Found")
+
+        messagebox.showerror(
+            "Error",
+            "Book Not Found"
+        )
+
         connection.close()
         return
 
     if row[0] == "Issued":
-        messagebox.showerror("Error", "Book Already Issued")
+
+        messagebox.showerror(
+            "Error",
+            "Book Already Issued"
+        )
+
         connection.close()
         return
 
@@ -111,18 +127,79 @@ def issue_book():
     student.delete(0, END)
 
 
-Button(
+# -----------------------------
+# Main Window
+# -----------------------------
+window = Tk()
+
+window.title("Issue Book")
+
+window.geometry("500x480")
+
+window.resizable(False, False)
+
+Label(
     window,
-    text="Search",
-    width=20,
-    command=search_book
-).pack(pady=5)
+    text="ISSUE BOOK",
+    font=("Arial",18,"bold")
+).pack(pady=15)
+
+Label(
+    window,
+    text="Book ID"
+).pack()
+
+book_id = Entry(
+    window,
+    width=30
+)
+book_id.pack()
+
+Label(
+    window,
+    text="Student Name"
+).pack()
+
+student = Entry(
+    window,
+    width=30
+)
+student.pack()
+
+result = Label(
+    window,
+    text="",
+    font=("Arial",11),
+    justify=LEFT
+)
+
+result.pack(pady=20)
+
+# -----------------------------
+# Buttons
+# -----------------------------
+button_frame = Frame(window)
+button_frame.pack(pady=10)
 
 Button(
-    window,
+    button_frame,
+    text="Search",
+    width=15,
+    command=search_book
+).grid(row=0, column=0, padx=10)
+
+Button(
+    button_frame,
     text="Issue Book",
-    width=20,
+    width=15,
     command=issue_book
-).pack(pady=10)
+).grid(row=0, column=1, padx=10)
+
+Button(
+    button_frame,
+    text="⬅ Back",
+    width=15,
+    command=back
+).grid(row=1, column=0, columnspan=2, pady=10)
 
 window.mainloop()
